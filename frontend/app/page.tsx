@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Suspense, useEffect } from "react"
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Suspense, useEffect } from "react";
 import {
   Sparkles,
   Zap,
@@ -17,55 +17,19 @@ import {
   Clock,
   ArrowRight,
   Shield,
-} from "lucide-react"
-import Link from "next/link"
-import { useUserStore } from "@/store/userStore"
+} from "lucide-react";
+import Link from "next/link";
+import { useUserStore } from "@/store/userStore";
 
 function LandingPageContent() {
-
-  const { user , loading , error , getUser } = useUserStore()
+  const {  getUser } = useUserStore();
 
   useEffect(() => {
-    getUser()
-  } , [])
+    getUser();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="text-5xl text-red-500">user: {user?.displayName}</div>
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 glassmorphism-dark">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-purple-blue flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-foreground">InboxAI</span>
-          </div>
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </Link>
-            <Link href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
-              Pricing
-            </Link>
-            <Link href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
-              How It Works
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard">
-              <Button variant="ghost" className="text-foreground">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/dashboard">
-              <Button className="gradient-purple-blue text-white border-0 hover:opacity-90 transition-opacity">
-                Start Free Trial
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-background">       
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
@@ -86,8 +50,8 @@ function LandingPageContent() {
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto text-balance">
-            Save 10+ hours per week with AI that categorizes, prioritizes, and responds to emails automatically. Never
-            miss what matters.
+            Save 10+ hours per week with AI that categorizes, prioritizes, and
+            responds to emails automatically. Never miss what matters.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
@@ -112,15 +76,25 @@ function LandingPageContent() {
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <Card className="p-6 glassmorphism border-border/40">
-              <div className="text-4xl font-bold gradient-purple-blue bg-clip-text text-transparent mb-2">2M+</div>
-              <div className="text-muted-foreground">Emails Processed Daily</div>
+              <div className="text-4xl font-bold gradient-purple-blue bg-clip-text text-transparent mb-2">
+                2M+
+              </div>
+              <div className="text-muted-foreground">
+                Emails Processed Daily
+              </div>
             </Card>
             <Card className="p-6 glassmorphism border-border/40">
-              <div className="text-4xl font-bold gradient-blue-cyan bg-clip-text text-transparent mb-2">10hrs</div>
-              <div className="text-muted-foreground">Average Time Saved/Week</div>
+              <div className="text-4xl font-bold gradient-blue-cyan bg-clip-text text-transparent mb-2">
+                10hrs
+              </div>
+              <div className="text-muted-foreground">
+                Average Time Saved/Week
+              </div>
             </Card>
             <Card className="p-6 glassmorphism border-border/40">
-              <div className="text-4xl font-bold gradient-purple-cyan bg-clip-text text-transparent mb-2">50K+</div>
+              <div className="text-4xl font-bold gradient-purple-cyan bg-clip-text text-transparent mb-2">
+                50K+
+              </div>
               <div className="text-muted-foreground">Active Users</div>
             </Card>
           </div>
@@ -138,7 +112,8 @@ function LandingPageContent() {
               Everything You Need to Master Your Inbox
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Powered by advanced AI that learns your preferences and adapts to your workflow
+              Powered by advanced AI that learns your preferences and adapts to
+              your workflow
             </p>
           </div>
 
@@ -147,31 +122,36 @@ function LandingPageContent() {
               {
                 icon: <Brain className="w-6 h-6" />,
                 title: "Smart Categorization",
-                description: "Automatically sorts emails into urgent, newsletters, spam, and personal categories",
+                description:
+                  "Automatically sorts emails into urgent, newsletters, spam, and personal categories",
                 color: "from-purple-500 to-blue-500",
               },
               {
                 icon: <Zap className="w-6 h-6" />,
                 title: "Auto-Responses",
-                description: "Generate contextual replies based on email content and your writing style",
+                description:
+                  "Generate contextual replies based on email content and your writing style",
                 color: "from-blue-500 to-cyan-500",
               },
               {
                 icon: <Calendar className="w-6 h-6" />,
                 title: "Smart Scheduling",
-                description: "Extract dates and create calendar events automatically from emails",
+                description:
+                  "Extract dates and create calendar events automatically from emails",
                 color: "from-cyan-500 to-purple-500",
               },
               {
                 icon: <CheckCircle2 className="w-6 h-6" />,
                 title: "Action Items",
-                description: "Identify and track tasks mentioned in your emails with due dates",
+                description:
+                  "Identify and track tasks mentioned in your emails with due dates",
                 color: "from-purple-500 to-pink-500",
               },
               {
                 icon: <Mail className="w-6 h-6" />,
                 title: "Email Summarization",
-                description: "Get concise summaries of long email threads in seconds",
+                description:
+                  "Get concise summaries of long email threads in seconds",
                 color: "from-blue-500 to-purple-500",
               },
               {
@@ -190,8 +170,12 @@ function LandingPageContent() {
                 >
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-foreground">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">
+                  {feature.title}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
               </Card>
             ))}
           </div>
@@ -202,8 +186,12 @@ function LandingPageContent() {
       <section id="how-it-works" className="py-20 px-4 bg-muted/20">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <Badge className="mb-4 text-sm px-4 py-2 bg-accent/10 text-accent border-accent/20">How It Works</Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-balance">Get Started in 3 Simple Steps</h2>
+            <Badge className="mb-4 text-sm px-4 py-2 bg-accent/10 text-accent border-accent/20">
+              How It Works
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
+              Get Started in 3 Simple Steps
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -218,24 +206,32 @@ function LandingPageContent() {
               {
                 step: "02",
                 title: "AI Learns Your Style",
-                description: "Our AI analyzes your email patterns and preferences to personalize your experience.",
+                description:
+                  "Our AI analyzes your email patterns and preferences to personalize your experience.",
                 icon: <Brain className="w-8 h-8" />,
               },
               {
                 step: "03",
                 title: "Enjoy Automated Inbox",
-                description: "Sit back as AI handles categorization, responses, and action items automatically.",
+                description:
+                  "Sit back as AI handles categorization, responses, and action items automatically.",
                 icon: <Sparkles className="w-8 h-8" />,
               },
             ].map((step, index) => (
               <div key={index} className="relative">
                 <Card className="p-8 glassmorphism border-border/40 h-full">
-                  <div className="text-6xl font-bold text-primary/20 mb-4">{step.step}</div>
+                  <div className="text-6xl font-bold text-primary/20 mb-4">
+                    {step.step}
+                  </div>
                   <div className="w-16 h-16 rounded-xl gradient-purple-blue flex items-center justify-center mb-6">
                     {step.icon}
                   </div>
-                  <h3 className="text-2xl font-semibold mb-3 text-foreground">{step.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                  <h3 className="text-2xl font-semibold mb-3 text-foreground">
+                    {step.title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {step.description}
+                  </p>
                 </Card>
                 {index < 2 && (
                   <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
@@ -252,9 +248,15 @@ function LandingPageContent() {
       <section id="pricing" className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <Badge className="mb-4 text-sm px-4 py-2 bg-primary/10 text-primary border-primary/20">Pricing</Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-balance">Choose Your Perfect Plan</h2>
-            <p className="text-xl text-muted-foreground">Start free, upgrade when you need more power</p>
+            <Badge className="mb-4 text-sm px-4 py-2 bg-primary/10 text-primary border-primary/20">
+              Pricing
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
+              Choose Your Perfect Plan
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Start free, upgrade when you need more power
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -322,10 +324,14 @@ function LandingPageContent() {
                     Most Popular
                   </Badge>
                 )}
-                <h3 className="text-2xl font-bold mb-2 text-foreground">{plan.name}</h3>
+                <h3 className="text-2xl font-bold mb-2 text-foreground">
+                  {plan.name}
+                </h3>
                 <p className="text-muted-foreground mb-6">{plan.description}</p>
                 <div className="mb-6">
-                  <span className="text-5xl font-bold text-foreground">{plan.price}</span>
+                  <span className="text-5xl font-bold text-foreground">
+                    {plan.price}
+                  </span>
                   <span className="text-muted-foreground">{plan.period}</span>
                 </div>
                 <Link href="/dashboard">
@@ -364,18 +370,35 @@ function LandingPageContent() {
                 value: "2.5M+",
                 label: "Emails Processed",
               },
-              { icon: <Clock className="w-8 h-8 mx-auto mb-2 text-secondary" />, value: "500K+", label: "Hours Saved" },
-              { icon: <Users className="w-8 h-8 mx-auto mb-2 text-accent" />, value: "50K+", label: "Happy Users" },
               {
-                icon: <TrendingUp className="w-8 h-8 mx-auto mb-2 text-primary" />,
+                icon: <Clock className="w-8 h-8 mx-auto mb-2 text-secondary" />,
+                value: "500K+",
+                label: "Hours Saved",
+              },
+              {
+                icon: <Users className="w-8 h-8 mx-auto mb-2 text-accent" />,
+                value: "50K+",
+                label: "Happy Users",
+              },
+              {
+                icon: (
+                  <TrendingUp className="w-8 h-8 mx-auto mb-2 text-primary" />
+                ),
                 value: "98%",
                 label: "Satisfaction Rate",
               },
             ].map((stat, index) => (
-              <div key={index} className="glassmorphism p-6 rounded-lg border border-border/40">
+              <div
+                key={index}
+                className="glassmorphism p-6 rounded-lg border border-border/40"
+              >
                 {stat.icon}
-                <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-3xl font-bold text-foreground mb-1">
+                  {stat.value}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {stat.label}
+                </div>
               </div>
             ))}
           </div>
@@ -392,7 +415,8 @@ function LandingPageContent() {
             Ready to Transform Your Email Experience?
           </h2>
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Join thousands of professionals who've reclaimed their time with AI-powered email management
+            Join thousands of professionals who've reclaimed their time with
+            AI-powered email management
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/dashboard">
@@ -424,17 +448,26 @@ function LandingPageContent() {
               <h4 className="font-semibold mb-4 text-foreground">Product</h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     Features
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     Pricing
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     Security
                   </Link>
                 </li>
@@ -444,17 +477,26 @@ function LandingPageContent() {
               <h4 className="font-semibold mb-4 text-foreground">Company</h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     About
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     Blog
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     Careers
                   </Link>
                 </li>
@@ -464,17 +506,26 @@ function LandingPageContent() {
               <h4 className="font-semibold mb-4 text-foreground">Resources</h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     Documentation
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     Help Center
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     API
                   </Link>
                 </li>
@@ -484,17 +535,26 @@ function LandingPageContent() {
               <h4 className="font-semibold mb-4 text-foreground">Legal</h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     Privacy
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     Terms
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     Cookie Policy
                   </Link>
                 </li>
@@ -508,12 +568,14 @@ function LandingPageContent() {
               </div>
               <span className="font-semibold text-foreground">InboxAI</span>
             </div>
-            <p className="text-muted-foreground text-sm">© 2026 InboxAI. All rights reserved.</p>
+            <p className="text-muted-foreground text-sm">
+              © 2026 InboxAI. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
 export default function LandingPage() {
@@ -521,5 +583,5 @@ export default function LandingPage() {
     <Suspense fallback={null}>
       <LandingPageContent />
     </Suspense>
-  )
+  );
 }

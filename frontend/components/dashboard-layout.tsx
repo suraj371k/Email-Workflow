@@ -17,60 +17,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 glassmorphism-dark">
-        <div className="px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </Button>
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg gradient-purple-blue flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-foreground hidden sm:inline">InboxAI</span>
-            </Link>
-          </div>
+    <div className="min-h-screen bg-background">     
 
-          <div className="flex-1 max-w-2xl mx-4 hidden md:block">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Search emails with AI..." className="pl-10 bg-muted/50 border-border/40" />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="w-5 h-5" />
-              <Badge className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center p-0 text-xs bg-destructive text-white border-0">
-                3
-              </Badge>
-            </Button>
-            <Button variant="ghost" size="icon">
-              <User className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Mobile Search */}
-        <div className="md:hidden px-4 pb-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Search emails..." className="pl-10 bg-muted/50 border-border/40" />
-          </div>
-        </div>
-      </nav>
-
-      <div className="flex pt-[73px] md:pt-[57px]">
+      <div className="flex pt-18.25 md:pt-14.25">
         {/* Sidebar */}
         <aside
-          className={`fixed left-0 top-[73px] md:top-[57px] bottom-0 w-64 border-r border-border/40 bg-card/50 backdrop-blur-sm z-40 transition-transform duration-300 ${
+          className={`fixed left-0 top-18.25 md:top-14.25 bottom-0 w-64 border-r border-border/40 bg-card/50 backdrop-blur-sm z-40 transition-transform duration-300 ${
             mobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           }`}
         >
