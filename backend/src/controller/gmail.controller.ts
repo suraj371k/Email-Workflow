@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import { gmailClient } from "../services/gmail.services";
+import { gmailClient, getMessageByIdService } from "../services/gmail.services";
+import { FILTER_QUERY_MAP, structureEmailText } from "../utils/helper";
+
+console.log("🔥 getMessageById controller HIT");
 
 export const getLabels = async (req: Request, res: Response) => {
   try {
@@ -55,22 +58,7 @@ export const getMessages = async (req: Request, res: Response) => {
     const filter = (req.query.filter as string) || "all";
     const pageToken = req.query.pageToken as string | undefined;
 
-    let q = "in:inbox";
-
-    switch (filter) {
-      case "unread":
-        q = "is:unread";
-        break;
-      case "starred":
-        q = "is:starred";
-        break;
-      case "promotions":
-        q = "category:promotions";
-        break;
-      case "updates":
-        q = "category:updates";
-        break;
-    }
+    let q = FILTER_QUERY_MAP[filter] || "in:inbox";
 
     const listRes = await gmail.users.messages.list({
       userId: "me",
@@ -86,7 +74,7 @@ export const getMessages = async (req: Request, res: Response) => {
         gmail.users.messages.get({
           userId: "me",
           id: id!,
-          format: "metadata",
+          format: "full",
         }),
       ),
     );
@@ -100,6 +88,35 @@ export const getMessages = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error in getMessages:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getMessageById = async (req: Request, res: Response) => {
+  try {
+    const userId = (req.user as any)._id;
+    const { messageId } = req.params;
+
+    const message = await getMessageByIdService(messageId, userId);
+    const structured = structureEmailText(message.textBody);
+
+    console.log("structured: " , structured)
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        id: message.id,
+        subject: message.subject,
+        from: message.from,
+        content: structured,
+      },
+    });
+  } catch (error) {
+    console.error("Error in getMessageById controller:", error);
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",

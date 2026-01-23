@@ -1,5 +1,5 @@
 import { api } from "@/lib/backendUrl";
-import { GmailMessage } from "@/lib/types/gmail.types";
+import { GmailMessage, MessageBody } from "@/lib/types/gmail.types";
 import {
   NormalizedLabel,
   normalizeGmailLabel,
@@ -11,9 +11,11 @@ interface GmailState {
   labels: NormalizedLabel[];
   error: null | string;
   messages: GmailMessage[] | [];
+  message: MessageBody | null;
 
   getLabels: () => Promise<void>;
   getMessages: (filter: string) => Promise<void>;
+  getMessageById: (messageId: string) => Promise<void>;
   currentFilter: string;
   setFilter: (filter: string) => void;
 }
@@ -23,6 +25,7 @@ export const useGmailStore = create<GmailState>((set, get) => ({
   messages: [],
   loading: false,
   error: null,
+  message: null,
 
   currentFilter: "all",
 
@@ -69,6 +72,20 @@ export const useGmailStore = create<GmailState>((set, get) => ({
     } catch (error) {
       if (error instanceof Error) {
         console.error("Error in getMessages store:", error.message);
+        set({ error: error.message, loading: false });
+      }
+    }
+  },
+
+  getMessageById: async (messageId) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await api.get(`/api/gmail/message/${messageId}`);
+      set({ message: res.data.data, loading: false });
+      console.log(res.data);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error in getMessages by id store:", error.message);
         set({ error: error.message, loading: false });
       }
     }

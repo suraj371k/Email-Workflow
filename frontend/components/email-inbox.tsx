@@ -13,6 +13,7 @@ import {
 import { useGmailStore } from "../store/gmailStore"
 import { getHeader } from "@/utils/helper/getHeader"
 import clsx from "clsx"
+import Link from "next/link"
 
 function parseFrom(from: string) {
   const name = from.split("<")[0]?.replace(/"/g, "").trim()
@@ -104,13 +105,13 @@ export function EmailInbox() {
         )}
 
         {items.map((email) => (
-          <div
-            key={email.id}
-            className={clsx(
-              "px-4 py-3 cursor-pointer transition-colors hover:bg-muted/40",
-              email.unread && "bg-muted/30"
-            )}
-          >
+          <Link href={`/demo/${email.id}`} key={email.id}>
+            <div
+              className={clsx(
+                "px-4 py-3 cursor-pointer transition-colors hover:bg-muted/40",
+                email.unread && "bg-muted/30"
+              )}
+            >
             <div className="flex gap-3">
               <button className="mt-1">
                 <Star
@@ -152,7 +153,8 @@ export function EmailInbox() {
                 </p>
               </div>
             </div>
-          </div>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

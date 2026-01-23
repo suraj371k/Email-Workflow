@@ -3,7 +3,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Settings, Menu } from "lucide-react";
+import { Sparkles, Settings } from "lucide-react";
 import { useGmailStore } from "@/store/gmailStore";
 import clsx from "clsx";
 
@@ -11,10 +11,8 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-/**
- * Maps sidebar labels → backend filter values
- */
-function mapLabelToFilter(labelName: string) {
+
+function mapLabelToFilter(labelName: string): string | null {
   switch (labelName.toLowerCase()) {
     case "inbox":
       return "all";
@@ -37,7 +35,7 @@ function mapLabelToFilter(labelName: string) {
     case "social":
       return "social";
     default:
-      return "";
+      return null; // ❗ prevents broken / duplicate activation
   }
 }
 
@@ -59,7 +57,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             "fixed left-0 top-18.25 md:top-14.25 bottom-0 w-64 border-r border-border/40 bg-card/50 backdrop-blur-sm z-40 transition-transform duration-300",
             mobileMenuOpen
               ? "translate-x-0"
-              : "-translate-x-full md:translate-x-0",
+              : "-translate-x-full md:translate-x-0"
           )}
         >
           <div className="p-4 space-y-1">
@@ -78,6 +76,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 .filter((label) => label.group === "folder")
                 .map((label) => {
                   const filter = mapLabelToFilter(label.name);
+                  if (!filter) return null;
 
                   return (
                     <Button
@@ -96,7 +95,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* Category Labels */}
             <div className="pt-4 border-t border-border/40">
               <p className="text-xs font-semibold text-muted-foreground px-3 py-2">
-                AI VIEWS
+                CATEGORIES
               </p>
 
               <div className="space-y-1">
@@ -104,6 +103,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   .filter((label) => label.group === "category")
                   .map((label) => {
                     const filter = mapLabelToFilter(label.name);
+                    if (!filter) return null;
 
                     return (
                       <Button
@@ -127,28 +127,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
               </Button>
-            </div>
-          </div>
-
-          {/* Usage Stats */}
-          <div className="absolute bottom-4 left-4 right-4">
-            <div className="glassmorphism p-4 rounded-lg border border-border/40">
-              <p className="text-sm font-medium text-foreground mb-2">
-                AI Processing
-              </p>
-              <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                <span>487 / 500 emails</span>
-                <span>97%</span>
-              </div>
-              <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                <div
-                  className="h-full gradient-purple-blue"
-                  style={{ width: "97%" }}
-                />
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                13 emails remaining this month
-              </p>
             </div>
           </div>
         </aside>

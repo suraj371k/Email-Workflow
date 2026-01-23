@@ -1,6 +1,6 @@
 export interface Body {
   size: number;
-  data?: string; 
+  data?: string;
 }
 
 export interface Header {
@@ -14,9 +14,9 @@ export interface Payload {
   filename?: string;
   headers: Header[];
   body: Body;
-  parts?: Payload[]; 
+  parts?: Payload[];
+  messages: Body;
 }
-
 
 export interface GmailMessage {
   id: string;
@@ -38,4 +38,23 @@ export interface Labels {
   threadsTotal: number;
   threadsUnread: number;
   type: "system" | "user";
+}
+
+interface Links {
+  text: string;
+  url: string;
+}
+interface Content {
+  footer?: string;
+  intro: string;
+  links?: Links[];
+  paragraphs: string[];
+  title: string;
+}
+
+export interface MessageBody {
+  from: string;
+  id: string;
+  subject: string;
+  content: Content;
 }
