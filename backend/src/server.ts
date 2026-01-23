@@ -9,6 +9,7 @@ import cors from "cors";
 //routes imports
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
+import gmailRoutes from "./routes/gmail.routes";
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.get("/", (req, res) => {
 //routes
 app.use("/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/gmail", gmailRoutes);
 
 //database connection
 connectDb();

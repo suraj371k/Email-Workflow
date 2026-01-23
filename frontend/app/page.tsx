@@ -20,16 +20,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useUserStore } from "@/store/userStore";
+import { useGmailStore } from "@/store/gmailStore";
 
 function LandingPageContent() {
   const {  getUser } = useUserStore();
 
-  useEffect(() => {
-    getUser();
-  }, []);
-
   return (
-    <div className="min-h-screen bg-background">       
+    <div className="min-h-screen bg-background"> 
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">

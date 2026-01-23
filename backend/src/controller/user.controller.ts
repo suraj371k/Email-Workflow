@@ -8,7 +8,6 @@ export const getMe = async (req: Request, res: Response) => {
 
     const user = req.user as any;
 
-    console.log("user: ", user);
     res.json({
       success: true,
       data: {
