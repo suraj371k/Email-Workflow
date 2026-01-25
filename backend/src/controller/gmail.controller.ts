@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import { gmailClient, getMessageByIdService } from "../services/gmail.services";
 import { FILTER_QUERY_MAP, structureEmailText } from "../utils/helper";
 
-console.log("🔥 getMessageById controller HIT");
-
 export const getLabels = async (req: Request, res: Response) => {
   try {
     if (!req.user) {
@@ -102,8 +100,6 @@ export const getMessageById = async (req: Request, res: Response) => {
 
     const message = await getMessageByIdService(messageId, userId);
     const structured = structureEmailText(message.textBody);
-
-    console.log("structured: " , structured)
 
     return res.status(200).json({
       success: true,

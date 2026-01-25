@@ -18,28 +18,15 @@ import {
   Trash2,
   User,
 } from "lucide-react";
-
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getHeader, parseFrom } from "@/utils/helper/getHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Summary from "../summary/page";
+import { useAiStore } from "@/store/aiStore";
 
 export default function MessageDetail() {
   const { getMessageById, message, loading, messages, getMessages } =
@@ -49,35 +36,18 @@ export default function MessageDetail() {
   const [isStarred, setIsStarred] = useState(false);
   const [active, setActive] = useState("all");
   const [isEmail, setIsEmail] = useState("email");
+  const {
+    generateSummary,
+    loading: AiLoading,
+  } = useAiStore();
 
   useEffect(() => {
     getMessages(active);
   }, [active]);
 
-  const items = messages.map((msg) => {
-    const headers = msg.payload?.headers;
-    const from = getHeader(headers, "From");
-    const { name, email } = parseFrom(from);
-
-    return {
-      id: msg.id,
-      sender: name,
-      senderEmail: email,
-      subject: getHeader(headers, "Subject") || "(no subject)",
-      date: getHeader(headers, "Date"),
-      snippet: msg.snippet,
-      unread: msg?.labelIds?.includes("UNREAD"),
-      starred: msg?.labelIds?.includes("STARRED"),
-    };
-  });
-
-  let senderName = "";
-  let subject = "";
-
-  items.map((email) => {
-    senderName = email.sender;
-    subject = email.subject;
-  });
+  const handleGenerateSummary = async () => {
+    generateSummary(messageId);
+  };
 
   const getInitials = (name: string) => {
     return name
@@ -168,7 +138,13 @@ export default function MessageDetail() {
             </div>
 
             <div className="w-full">
-              <Button className="w-full cursor-pointer">Process with AI</Button>
+              <Button
+                
+                onClick={handleGenerateSummary}
+                className="w-full cursor-pointer"
+              >
+                {AiLoading ? "Processing..." : "Process with AI"}
+              </Button>
             </div>
 
             {/* tabs */}

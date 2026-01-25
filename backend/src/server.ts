@@ -10,7 +10,7 @@ import cors from "cors";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import gmailRoutes from "./routes/gmail.routes";
-
+import aiRoutes from "./routes/ai.routes";
 const app = express();
 
 app.use(
@@ -19,15 +19,16 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 24 * 60 * 60 * 1000 },
-  })
+  }),
 );
 
 app.use(
   cors({
     origin: "http://localhost:3000",
     credentials: true,
-  })
+  }),
 );
+app.use(express.json())
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -37,10 +38,12 @@ app.get("/", (req, res) => {
   res.send("app is running successfully");
 });
 
+
 //routes
 app.use("/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/gmail", gmailRoutes);
+app.use("/api/ai", aiRoutes);
 
 //database connection
 connectDb();
