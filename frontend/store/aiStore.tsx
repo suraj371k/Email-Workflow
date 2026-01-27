@@ -23,7 +23,7 @@ interface Summary {
 }
 
 interface SummaryState {
-  summaryMap: Record<string, Summary>; // messageId -> Summary
+  summaryMap: Record<string, Summary>; 
   loading: boolean;
   error: string | null;
 

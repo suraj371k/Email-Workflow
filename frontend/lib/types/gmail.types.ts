@@ -26,6 +26,8 @@ export interface GmailMessage {
   sizeEstimate?: number;
   internalDate?: string;
   payload: Payload;
+  nextPageToken: string | null;
+  hasMore: boolean;
 }
 
 export interface Labels {
@@ -57,4 +59,10 @@ export interface MessageBody {
   id: string;
   subject: string;
   content: Content;
+}
+
+export interface DraftInput {
+  to: string;
+  subject: string;
+  body: string;
 }
