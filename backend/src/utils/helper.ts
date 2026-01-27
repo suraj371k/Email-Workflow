@@ -68,7 +68,7 @@ export const FILTER_QUERY_MAP: Record<string, string> = {
   unread: "is:unread",
   starred: "is:starred",
   sent: "in:sent",
-  drafts: "in:drafts",
+  drafts: "is:draft",
   spam: "in:spam",
   trash: "in:trash",
   promotions: "category:promotions",

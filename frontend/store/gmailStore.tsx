@@ -1,5 +1,5 @@
 import { api } from "@/lib/backendUrl";
-import { GmailMessage, MessageBody } from "@/lib/types/gmail.types";
+import { DraftInput, GmailMessage, MessageBody } from "@/lib/types/gmail.types";
 import {
   NormalizedLabel,
   normalizeGmailLabel,
@@ -12,11 +12,17 @@ interface GmailState {
   error: null | string;
   messages: GmailMessage[] | [];
   message: MessageBody | null;
+  nextPageToken: string | null;
+  hasMore: boolean;
+  currentFilter: string;
+  draft: GmailMessage | null;
+  drafts: GmailMessage[];
 
   getLabels: () => Promise<void>;
-  getMessages: (filter: string) => Promise<void>;
+  getMessages: (filter: string, loadMore: boolean) => Promise<void>;
   getMessageById: (messageId: string) => Promise<void>;
-  currentFilter: string;
+  createDraft: (data: DraftInput) => Promise<void>;
+  getDrafts: () => Promise<void>;
   setFilter: (filter: string) => void;
 }
 
@@ -26,12 +32,21 @@ export const useGmailStore = create<GmailState>((set, get) => ({
   loading: false,
   error: null,
   message: null,
+  nextPageToken: null,
+  hasMore: true,
+  draft: null,
+  drafts: [],
 
   currentFilter: "all",
 
   setFilter: (filter: string) => {
-    set({ currentFilter: filter });
-    get().getMessages(filter);
+    set({
+      currentFilter: filter,
+      messages: [],
+      nextPageToken: null,
+      hasMore: true,
+    });
+    get().getMessages(filter, false);
   },
 
   getLabels: async () => {
@@ -57,18 +72,30 @@ export const useGmailStore = create<GmailState>((set, get) => ({
     }
   },
 
-  getMessages: async (filter: string = get().currentFilter) => {
+  getMessages: async (
+    filter: string = get().currentFilter,
+    loadMore: boolean = false,
+  ) => {
     set({ loading: true, error: null });
 
     try {
+      const { nextPageToken } = get();
+
       const res = await api.get("/api/gmail/messages", {
-        params: filter !== "all" ? { filter } : {},
+        params: {
+          ...(filter !== "all" && { filter }),
+          ...(loadMore && nextPageToken && { pageToken: nextPageToken }),
+        },
       });
 
-      set({
-        messages: res.data.data,
+      set((state) => ({
+        messages: loadMore
+          ? [...state.messages, ...res.data.data]
+          : res.data.data,
+        nextPageToken: res.data.nextPageToken,
+        hasMore: Boolean(res.data.nextPageToken),
         loading: false,
-      });
+      }));
     } catch (error) {
       if (error instanceof Error) {
         console.error("Error in getMessages store:", error.message);
@@ -88,6 +115,35 @@ export const useGmailStore = create<GmailState>((set, get) => ({
         console.error("Error in getMessages by id store:", error.message);
         set({ error: error.message, loading: false });
       }
+    }
+  },
+
+  createDraft: async (data) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await api.post("/api/gmail/draft", data);
+      set({ draft: res.data, loading: false });
+      return res.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error in create draft store:", error.message);
+        set({ error: error.message, loading: false });
+      }
+      throw error;
+    }
+  },
+
+  getDrafts: async () => {
+    set({ loading: true, error: null });
+    try {
+      const res = await api.get("/api/gmail/draft");
+      set({ drafts: res.data, loading: false });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error in create draft store:", error.message);
+        set({ error: error.message, loading: false });
+      }
+      throw error;
     }
   },
 }));

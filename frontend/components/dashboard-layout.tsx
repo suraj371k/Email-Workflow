@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, Settings } from "lucide-react";
 import { useGmailStore } from "@/store/gmailStore";
 import clsx from "clsx";
+import { useUiStore } from "@/store/uiStore";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
-
 
 function mapLabelToFilter(labelName: string): string | null {
   switch (labelName.toLowerCase()) {
@@ -22,7 +22,7 @@ function mapLabelToFilter(labelName: string): string | null {
       return "starred";
     case "sent":
       return "sent";
-    case "drafts":
+    case "draft":
       return "drafts";
     case "spam":
       return "spam";
@@ -35,13 +35,13 @@ function mapLabelToFilter(labelName: string): string | null {
     case "social":
       return "social";
     default:
-      return null; // ❗ prevents broken / duplicate activation
+      return null;
   }
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const openCompose = useUiStore((s) => s.openCompose)
   const { labels, getLabels, currentFilter, setFilter } = useGmailStore();
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             "fixed left-0 top-18.25 md:top-14.25 bottom-0 w-64 border-r border-border/40 bg-card/50 backdrop-blur-sm z-40 transition-transform duration-300",
             mobileMenuOpen
               ? "translate-x-0"
-              : "-translate-x-full md:translate-x-0"
+              : "-translate-x-full md:translate-x-0",
           )}
         >
           <div className="p-4 space-y-1">
@@ -65,6 +65,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <Button
               variant="default"
               className="w-full justify-start gradient-purple-blue text-white border-0 hover:opacity-90"
+              onClick={openCompose}
             >
               <Sparkles className="w-4 h-4 mr-2" />
               Compose

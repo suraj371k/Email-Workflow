@@ -1,42 +1,43 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Star,
   MoreVertical,
   RefreshCw,
   Filter,
   ChevronDown,
-} from "lucide-react"
-import { useGmailStore } from "../store/gmailStore"
-import { getHeader } from "@/utils/helper/getHeader"
-import clsx from "clsx"
-import Link from "next/link"
+} from "lucide-react";
+import { useGmailStore } from "../store/gmailStore";
+import { getHeader } from "@/utils/helper/getHeader";
+import clsx from "clsx";
+import Link from "next/link";
 
 function parseFrom(from: string) {
-  const name = from.split("<")[0]?.replace(/"/g, "").trim()
-  const email = from.match(/<(.+?)>/)?.[1]
+  const name = from.split("<")[0]?.replace(/"/g, "").trim();
+  const email = from.match(/<(.+?)>/)?.[1];
 
   return {
     name: name || email || "Unknown",
     email: email || "",
-  }
+  };
 }
 
 export function EmailInbox() {
-  const [activeFilter, setActiveFilter] = useState("all")
-  const { getMessages, messages, loading } = useGmailStore()
+  const [activeFilter, setActiveFilter] = useState("all");
+  const { getMessages, messages, loading, hasMore, currentFilter } =
+    useGmailStore();
 
   useEffect(() => {
-    getMessages(activeFilter)
-  }, [getMessages , activeFilter])
+    getMessages(activeFilter, false);
+  }, [getMessages, activeFilter]);
 
   const items = messages.map((msg) => {
-    const headers = msg.payload?.headers
-    const from = getHeader(headers, "From")
-    const { name, email } = parseFrom(from)
+    const headers = msg.payload?.headers;
+    const from = getHeader(headers, "From");
+    const { name, email } = parseFrom(from);
 
     return {
       id: msg.id,
@@ -47,8 +48,8 @@ export function EmailInbox() {
       snippet: msg.snippet,
       unread: msg?.labelIds?.includes("UNREAD"),
       starred: msg?.labelIds?.includes("STARRED"),
-    }
-  })
+    };
+  });
 
   return (
     <div className="h-full flex flex-col bg-background">
@@ -75,7 +76,7 @@ export function EmailInbox() {
               variant={activeFilter === filter ? "default" : "outline"}
               className={clsx(
                 activeFilter === filter &&
-                  "gradient-purple-blue text-white border-0"
+                  "gradient-purple-blue text-white border-0",
               )}
               onClick={() => setActiveFilter(filter)}
             >
@@ -109,54 +110,66 @@ export function EmailInbox() {
             <div
               className={clsx(
                 "px-4 py-3 cursor-pointer transition-colors hover:bg-muted/40",
-                email.unread && "bg-muted/30"
+                email.unread && "bg-muted/30",
               )}
             >
-            <div className="flex gap-3">
-              <button className="mt-1">
-                <Star
-                  className={clsx(
-                    "h-4 w-4",
-                    email.starred
-                      ? "fill-yellow-500 text-yellow-500"
-                      : "text-muted-foreground"
-                  )}
-                />
-              </button>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center">
-                  <span
+              <div className="flex gap-3">
+                <button className="mt-1">
+                  <Star
                     className={clsx(
-                      "truncate",
-                      email.unread ? "font-semibold" : "text-muted-foreground"
+                      "h-4 w-4",
+                      email.starred
+                        ? "fill-yellow-500 text-yellow-500"
+                        : "text-muted-foreground",
+                    )}
+                  />
+                </button>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-center">
+                    <span
+                      className={clsx(
+                        "truncate",
+                        email.unread
+                          ? "font-semibold"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      {email.sender}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {email.date}
+                    </span>
+                  </div>
+
+                  <p
+                    className={clsx(
+                      "text-sm truncate",
+                      email.unread ? "font-semibold" : "text-muted-foreground",
                     )}
                   >
-                    {email.sender}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {email.date}
-                  </span>
+                    {email.subject}
+                  </p>
+
+                  <p className="text-sm text-muted-foreground truncate">
+                    {email.snippet}
+                  </p>
                 </div>
-
-                <p
-                  className={clsx(
-                    "text-sm truncate",
-                    email.unread ? "font-semibold" : "text-muted-foreground"
-                  )}
-                >
-                  {email.subject}
-                </p>
-
-                <p className="text-sm text-muted-foreground truncate">
-                  {email.snippet}
-                </p>
               </div>
-            </div>
             </div>
           </Link>
         ))}
+        <div className="w-full py-10 flex items-center justify-center">
+          {hasMore && (
+            <Button
+              onClick={() => getMessages(currentFilter, true)}
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Load older emails"}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
-  )
+  );
 }

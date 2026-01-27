@@ -36,10 +36,7 @@ export default function MessageDetail() {
   const [isStarred, setIsStarred] = useState(false);
   const [active, setActive] = useState("all");
   const [isEmail, setIsEmail] = useState("email");
-  const {
-    generateSummary,
-    loading: AiLoading,
-  } = useAiStore();
+  const { generateSummary, loading: AiLoading, summaryMap } = useAiStore();
 
   useEffect(() => {
     getMessages(active);
@@ -139,7 +136,7 @@ export default function MessageDetail() {
 
             <div className="w-full">
               <Button
-                
+                disabled={summaryMap[messageId] !== undefined}
                 onClick={handleGenerateSummary}
                 className="w-full cursor-pointer"
               >
