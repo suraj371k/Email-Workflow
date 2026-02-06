@@ -19,7 +19,7 @@ import toast from "react-hot-toast";
 
 const Draft = () => {
   const { composeOpen, closeCompose } = useUiStore();
-  const { createDraft, loading } = useGmailStore();
+  const { createDraft, sendEmail, loading } = useGmailStore();
 
   const [data, setData] = useState({
     to: "",
@@ -29,10 +29,30 @@ const Draft = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await createDraft(data);
-    setData({ to: "", subject: "", body: "" });
-    toast.success("draft saved successfully!!");
-    closeCompose();
+    try {
+      await createDraft(data);
+      setData({ to: "", subject: "", body: "" });
+      toast.success("Draft saved successfully!!");
+      closeCompose();
+    } catch (error) {
+      toast.error("Failed to save draft. Please try again.");
+    }
+  };
+
+  const handleSend = async () => {
+    if (!data.to || !data.body) {
+      toast.error("Please fill in recipient and message");
+      return;
+    }
+
+    try {
+      await sendEmail(data);
+      setData({ to: "", subject: "", body: "" });
+      toast.success("Email sent successfully!!");
+      closeCompose();
+    } catch (error) {
+      toast.error("Failed to send email. Please try again.");
+    }
   };
 
   return (
@@ -47,6 +67,8 @@ const Draft = () => {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="grid gap-5 py-2">
+
+          {/* to input */}
           <div className="grid gap-2.5">
             <Label className="text-sm font-medium text-zinc-300">To</Label>
             <Input
@@ -61,6 +83,8 @@ const Draft = () => {
             />
           </div>
 
+          {/* subject input */}
+
           <div className="grid gap-2.5">
             <Label className="text-sm font-medium text-zinc-300">Subject</Label>
             <Input
@@ -73,6 +97,7 @@ const Draft = () => {
             />
           </div>
 
+          {/* message textarea */}
           <div className="grid gap-2.5">
             <Label className="text-sm font-medium text-zinc-300">Message</Label>
             <Textarea
@@ -85,7 +110,10 @@ const Draft = () => {
             />
           </div>
 
+          {/* dialog footer */}
           <DialogFooter className="border-t border-zinc-800 pt-4 gap-3">
+
+            {/* cancel button */}
             <Button
               type="button"
               variant="outline"
@@ -95,6 +123,7 @@ const Draft = () => {
               Cancel
             </Button>
 
+            {/* save draft button */}
             <Button
               type="submit"
               disabled={loading}
@@ -104,13 +133,15 @@ const Draft = () => {
               {loading ? "Saving..." : "Save Draft"}
             </Button>
 
+           {/* send email button */}
             <Button
               type="button"
-              disabled
+              onClick={handleSend}
+              disabled={loading || !data.to || !data.body}
               className="bg-linear-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-900/20"
             >
               <Send className="h-4 w-4 mr-2" />
-              Send
+              {loading ? "Sending..." : "Send"}
             </Button>
           </DialogFooter>
         </form>

@@ -48,6 +48,7 @@ export const getMessageByIdService = async (
     subject:
       payload?.headers?.find((h: any) => h.name === "Subject")?.value ?? "",
     from: payload?.headers?.find((h: any) => h.name === "From")?.value ?? "",
+    date: payload?.headers?.find((h: any) => h.name === "Date")?.value ?? "",
     textBody,
   };
 };

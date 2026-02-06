@@ -5,7 +5,9 @@ import {
   getMessages,
   getLabels,
   createDraft,
-  getDraft,
+  sendEmail,
+  toggleStar,
+  markAsRead,
 } from "../controller/gmail.controller";
 
 const router = Router();
@@ -18,6 +20,10 @@ router.get("/message/:messageId", isAuthenticated, getMessageById);
 
 router.post("/draft", isAuthenticated, createDraft);
 
-router.get("/draft", isAuthenticated, getDraft);
+router.post("/send", isAuthenticated, sendEmail);
+
+router.post("/message/:messageId/star", isAuthenticated, toggleStar);
+
+router.post("/message/:messageId/read", isAuthenticated, markAsRead);
 
 export default router;

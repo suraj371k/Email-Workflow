@@ -27,19 +27,30 @@ import { getHeader, parseFrom } from "@/utils/helper/getHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Summary from "../summary/page";
 import { useAiStore } from "@/store/aiStore";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import toast from "react-hot-toast";
+import { FormEvent } from "react";
 
 export default function MessageDetail() {
-  const { getMessageById, message, loading, messages, getMessages } =
+  const { getMessageById, message, loading, messages, getMessages, sendEmail } =
     useGmailStore();
   const params = useParams();
   const messageId = params?.messageId as string;
-  const [isStarred, setIsStarred] = useState(false);
   const [active, setActive] = useState("all");
-  const [isEmail, setIsEmail] = useState("email");
   const { generateSummary, loading: AiLoading, summaryMap } = useAiStore();
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [data, setData] = useState({
+    to: "",
+    subject: "",
+    body: "",
+  });
+
 
   useEffect(() => {
-    getMessages(active);
+    getMessages(active, false);
   }, [active]);
 
   const handleGenerateSummary = async () => {
@@ -53,6 +64,19 @@ export default function MessageDetail() {
       .join("")
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  const formatEmailDate = (dateString: string | undefined): Date | null => {
+    if (!dateString) return null;
+    try {
+      // Gmail dates are in RFC 2822 format, which Date can parse
+      const date = new Date(dateString);
+      // Check if date is valid
+      if (isNaN(date.getTime())) return null;
+      return date;
+    } catch (error) {
+      return null;
+    }
   };
 
   useEffect(() => {
@@ -74,6 +98,39 @@ export default function MessageDetail() {
     );
   }
 
+  const handleOpenReply = () => {
+    if (message) {
+      const { email } = parseFrom(message.from || "");
+      
+      setData({
+        to: email || message.from || "",
+        subject: message.subject?.startsWith("Re: ") 
+          ? message.subject 
+          : `Re: ${message.subject || ""}`,
+        body: "",
+      });
+      setReplyOpen(true);
+    }
+  };
+
+  const handleSend = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!data.to || !data.body) {
+      toast.error("Please fill in recipient and message");
+      return;
+    }
+
+    try {
+      await sendEmail(data);
+      setData({ to: "", subject: "", body: "" });
+      toast.success("Email sent successfully!!");
+      setReplyOpen(false);
+    } catch (error) {
+      toast.error("Failed to send email. Please try again.");
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-black text-gray-100">
       <Tabs defaultValue="email">
@@ -92,7 +149,11 @@ export default function MessageDetail() {
                   Inbox
                 </Badge>
                 <span className="text-gray-600">•</span>
-                <span>{format(new Date(), "MMM d, yyyy, h:mm a")}</span>
+                <span>
+                  {message?.date && formatEmailDate(message.date)
+                    ? format(formatEmailDate(message.date)!, "MMM d, yyyy, h:mm a")
+                    : message?.date || ""}
+                </span>
               </div>
             </div>
 
@@ -121,7 +182,9 @@ export default function MessageDetail() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-gray-400">
-                    {format(new Date(), "h:mm a")}
+                    {message?.date && formatEmailDate(message.date)
+                      ? format(formatEmailDate(message.date)!, "h:mm a")
+                      : ""}
                     <Button
                       variant="ghost"
                       size="icon"
@@ -250,25 +313,86 @@ py-5
 
               {/* Quick Reply Buttons */}
               <div className="flex items-center gap-3 mb-10">
-                <Button className="rounded-lg gap-2 bg-linear-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 border border-gray-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
+                <Button 
+                  onClick={handleOpenReply} 
+                  className="rounded-lg gap-2 bg-linear-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 border border-gray-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                >
                   <Reply className="h-4 w-4" />
                   Reply
                 </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-lg gap-2 border-gray-700 text-gray-300 hover:bg-gray-800/50 hover:text-white hover:border-gray-600"
-                >
-                  <ReplyAll className="h-4 w-4" />
-                  Reply All
-                </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-lg gap-2 border-gray-700 text-gray-300 hover:bg-gray-800/50 hover:text-white hover:border-gray-600"
-                >
-                  <Forward className="h-4 w-4" />
-                  Forward
-                </Button>
               </div>
+
+              {/* Reply Dialog */}
+              <Dialog open={replyOpen} onOpenChange={setReplyOpen}>
+                <DialogContent className="sm:max-w-[600px] bg-black border-zinc-800 text-zinc-100">
+                  <DialogHeader className="border-b border-zinc-800 pb-4">
+                    <DialogTitle className="text-xl font-semibold text-zinc-100">
+                      Reply to {message?.from}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleSend} className="grid gap-5 py-4">
+                    {/* To input */}
+                    <div className="grid gap-2.5">
+                      <Label className="text-sm font-medium text-zinc-300">To</Label>
+                      <Input
+                        type="email"
+                        value={data.to}
+                        onChange={(e) =>
+                          setData((prev) => ({ ...prev, to: e.target.value }))
+                        }
+                        placeholder="recipient@email.com"
+                        required
+                        className="bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:border-blue-500 focus:ring-blue-500/20"
+                      />
+                    </div>
+
+                    {/* Subject input */}
+                    <div className="grid gap-2.5">
+                      <Label className="text-sm font-medium text-zinc-300">Subject</Label>
+                      <Input
+                        value={data.subject}
+                        onChange={(e) =>
+                          setData((prev) => ({ ...prev, subject: e.target.value }))
+                        }
+                        placeholder="Enter subject"
+                        className="bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:border-blue-500 focus:ring-blue-500/20"
+                      />
+                    </div>
+
+                    {/* Message textarea */}
+                    <div className="grid gap-2.5">
+                      <Label className="text-sm font-medium text-zinc-300">Message</Label>
+                      <Textarea
+                        value={data.body}
+                        onChange={(e) =>
+                          setData((prev) => ({ ...prev, body: e.target.value }))
+                        }
+                        placeholder="Type your reply..."
+                        className="min-h-[200px] bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:border-blue-500 focus:ring-blue-500/20 resize-none"
+                        required
+                      />
+                    </div>
+
+                    <DialogFooter className="border-t border-zinc-800 pt-4 gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setReplyOpen(false)}
+                        className="border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={loading || !data.to || !data.body}
+                        className="bg-linear-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loading ? "Sending..." : "Send Reply"}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
             <TabsContent value="summary">
               <Summary />

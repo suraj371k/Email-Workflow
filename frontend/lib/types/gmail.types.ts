@@ -59,6 +59,7 @@ export interface MessageBody {
   id: string;
   subject: string;
   content: Content;
+  date: string;
 }
 
 export interface DraftInput {

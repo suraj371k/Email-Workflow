@@ -25,7 +25,7 @@
     "html-to-text": "^9.0.5",
     "jsonwebtoken": "^9.0.3",
     "langchain": "^1.2.13",
-    "mongoose": "^9.1.2",
+    "mongoose": "^9.1.5",
     "nodemon": "^3.1.11",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",

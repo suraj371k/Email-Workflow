@@ -27,7 +27,7 @@ function parseFrom(from: string) {
 
 export function EmailInbox() {
   const [activeFilter, setActiveFilter] = useState("all");
-  const { getMessages, messages, loading, hasMore, currentFilter } =
+  const { getMessages, messages, loading, hasMore, currentFilter, toggleStar } =
     useGmailStore();
 
   useEffect(() => {
@@ -51,6 +51,10 @@ export function EmailInbox() {
     };
   });
 
+  const handleRefresh = () => {
+    getMessages(currentFilter, false);
+  }
+
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Header */}
@@ -58,11 +62,8 @@ export function EmailInbox() {
         <div className="p-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Inbox</h2>
           <div className="flex gap-2">
-            <Button variant="ghost" size="icon">
+            <Button onClick={handleRefresh} variant="ghost" size="icon">
               <RefreshCw className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <MoreVertical className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -83,11 +84,6 @@ export function EmailInbox() {
               {filter[0].toUpperCase() + filter.slice(1)}
             </Button>
           ))}
-          <Button size="sm" variant="outline">
-            <Filter className="w-3 h-3 mr-1" />
-            More
-            <ChevronDown className="w-3 h-3 ml-1" />
-          </Button>
         </div>
       </div>
 
@@ -114,13 +110,20 @@ export function EmailInbox() {
               )}
             >
               <div className="flex gap-3">
-                <button className="mt-1">
+                <button
+                  className="mt-1"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleStar(email.id);
+                  }}
+                >
                   <Star
                     className={clsx(
-                      "h-4 w-4",
+                      "h-4 w-4 transition-colors",
                       email.starred
                         ? "fill-yellow-500 text-yellow-500"
-                        : "text-muted-foreground",
+                        : "text-muted-foreground hover:text-yellow-500",
                     )}
                   />
                 </button>
